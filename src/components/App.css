@@ -1,3 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik+Glitch&display=swap');
+
+@font-face {
+  font-family: 'Gaoel';
+  src: local('Gaoel'), local('Gaoel Regular'),
+      url('../resources/fonts/Gaoel/Gaoel.eot') format('eot'),
+      url('../resources/fonts/Gaoel/Gaoel.ttf') format('ttf'),
+      url('../resources/fonts/Gaoel/Gaoel.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Glitch Goblin';
+  src: local('Glitch Goblin'),
+    url('../resources/fonts/GlitchGoblin/GlitchGoblin.ttf') format('ttf');
+}
+
 .App {
   text-align: center;
 }

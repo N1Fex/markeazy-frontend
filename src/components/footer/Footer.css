@@ -1,0 +1,10 @@
+footer {
+    width: 100%;
+    background: #000;
+    color: #fff;
+}
+
+.footer-link {
+    color: #DDD;
+    text-decoration: none;
+}
