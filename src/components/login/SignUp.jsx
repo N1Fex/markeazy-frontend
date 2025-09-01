@@ -1,4 +1,4 @@
-import {Button, InputLabel, Stack, TextField, Typography} from "@mui/material";
+import {Button, InputLabel, TextField, Typography} from "@mui/material";
 import React from "react";
 
 const SignUp = ({email, setEmail,setPage}) => {

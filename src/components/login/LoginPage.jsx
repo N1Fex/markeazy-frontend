@@ -1,7 +1,8 @@
 import React from 'react';
-import {Container, Stack, Typography} from "@mui/material";
+import {Stack, Typography} from "@mui/material";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
+import FormContainer from "./FormContainer";
 
 
 const LoginPage = () => {
@@ -10,11 +11,7 @@ const LoginPage = () => {
   const [email, setEmail] = React.useState("");
 
   return (
-    <Container sx={{border: "solid 3px black",
-                    borderRadius: "8px",
-                    width: {sm: 450, xs: "min(400px, 95%)"},
-                    marginY: 4,
-              }}>
+    <FormContainer>
       <Stack direction="column" justifyContent="space-around" sx={{paddingTop: 2, paddingBottom: 2, width: '100%'}}>
         <Typography variant="h5" align="center">
           {page === "login" && "Вход"}
@@ -23,7 +20,8 @@ const LoginPage = () => {
         {page === "login" && <SignIn setPage={setPage} email={email} setEmail={setEmail} />}
         {page === "register" && <SignUp setPage={setPage} email={email} setEmail={setEmail}/>}
       </Stack>
-    </Container>
+
+    </FormContainer>
   );
 };
 

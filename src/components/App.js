@@ -1,13 +1,15 @@
 import './App.css';
-import {Route, Routes, ScrollRestoration, useLocation} from "react-router-dom";
-import Header from "./header/Header";
-import Footer from "./footer/Footer";
-import Main from "./Main";
+import {Route, Routes, useLocation} from "react-router-dom";
+import Header from "./common/header/Header";
+import Footer from "./common/footer/Footer";
+import MainPage from "./main/MainPage";
 import LoginPage from "./login/LoginPage";
 import PasswordRecovery from "./login/PasswordRecovery";
-import NotFoundPage from "./NotFoundPage";
+import NotFoundPage from "./common/NotFoundPage";
 import ProductPage from "./product/ProductPage";
 import {useLayoutEffect} from "react";
+import SearchPage from "./search/SearchPage";
+import ProfilePage from "./profile/ProfilePage";
 
 function App() {
   const location = useLocation();
@@ -18,17 +20,20 @@ function App() {
   }, [location.pathname]);
 
   return (
-    <>
+      <>
         <Header />
         <Routes>
-          <Route path="/" element={<Main/>} />
+          <Route index path="/" element={<MainPage/>}/>
           <Route path="/login" element={<LoginPage/>} />
           <Route path="/recovery" element={<PasswordRecovery/>} />
-          <Route path="/products/:id" element={<ProductPage/>} />
+          <Route path="/product/:id" element={<ProductPage/>} />
+          <Route path="/search" element={<SearchPage/>} />
+          <Route path="/profile" element={<ProfilePage/>} />
           <Route path="*" element={<NotFoundPage/>} />
         </Routes>
         <Footer />
-    </>
+      </>
+
   );
 }
 

@@ -1,5 +1,6 @@
 import React from 'react';
-import {Button, Container, InputLabel, Stack, TextField, Typography} from "@mui/material";
+import {Button, InputLabel, Stack, TextField, Typography} from "@mui/material";
+import FormContainer from "./FormContainer";
 
 const PasswordRecovery = () => {
 
@@ -8,11 +9,7 @@ const PasswordRecovery = () => {
   }
 
   return (
-    <Container sx={{border: "solid 3px black",
-      borderRadius: "8px",
-      width: {sm: 450, xs: "min(400px, 95%)"},
-      marginY: 4,
-    }}>
+    <FormContainer>
       <Stack direction="column" justifyContent="space-around" sx={{paddingTop: 2, paddingBottom: 2}}>
         <Typography variant="h5" align="center">
           Восстановление доступа
@@ -35,7 +32,7 @@ const PasswordRecovery = () => {
           </Button>
         </form>
       </Stack>
-    </Container>
+    </FormContainer>
   )
 };
 

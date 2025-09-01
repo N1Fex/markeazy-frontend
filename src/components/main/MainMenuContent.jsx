@@ -1,5 +1,5 @@
 import React from 'react';
-import {Chip, Container, Dialog, Divider, IconButton, Slide, Typography} from "@mui/material";
+import {Container, Dialog, Divider, IconButton, Slide, Typography} from "@mui/material";
 import ArrowBackIosNewRoundedIcon from '@mui/icons-material/ArrowBackIosNewRounded';
 
 const Transition = React.forwardRef(function Transition(props, ref) {

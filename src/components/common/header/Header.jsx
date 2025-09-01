@@ -1,5 +1,5 @@
 import React from 'react';
-import {AppBar, Button, IconButton, MenuItem, Menu, Stack, Toolbar, Typography} from "@mui/material";
+import {AppBar, Button, IconButton, Stack, Toolbar, Typography} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import SearchBar from "./SearchBar";
 import Logotype from "../Logotype";
@@ -8,7 +8,9 @@ import MenuIcon from '@mui/icons-material/Menu';
 import CategoryIcon from '@mui/icons-material/Category';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
-import MainMenuContent from "./MainMenuContent";
+import MainMenuContent from "../../main/MainMenuContent";
+import {isUserValid} from "../../utils/JwtUtils";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const Header = () => {
 
@@ -20,6 +22,14 @@ const Header = () => {
     setOpenedMainMenu(true);
   };
 
+
+  const handleProfile = (event) => {
+    if (isUserValid()) {
+      navigate("/profile");
+    } else {
+      navigate("/login");
+    }
+  }
 
   return (
     <>
@@ -34,7 +44,7 @@ const Header = () => {
               <Stack direction="row" alignItems="center" spacing={2}
                      sx={{height: "100%", width:"auto", margin: 0, padding: 0.3,
                      display: {sm: "flex", xs: "none"}}}>
-                <Logotype type={"logoNoText"}/>
+                <Logotype type={"logoNoText"} />
                 <BrandName fontSize={24} fontColor={"primary"} sx={{display: {md: "block", xs: "none"}}}/>
               </Stack>
 
@@ -54,7 +64,7 @@ const Header = () => {
 
 
 
-              <Stack direction="row" spacing={3} alignItems="center">
+              <Stack direction="row" spacing={{md: 2, xs: 0}} alignItems="center">
                 <Button sx={{paddingY: {md: 0, xs: 1}, textTransform: "none",
                   minWidth: "max-content", borderRadius: {md: "inherit", xs:"50%"}}}>
 
@@ -64,16 +74,23 @@ const Header = () => {
                   </Stack>
 
                 </Button>
+
+                <Button sx={{color: "#808080", paddingY: {md: 0, xs: 1}, textTransform: "none",
+                  minWidth: "max-content", borderRadius: {md: "inherit", xs:"50%"}}}
+                  onClick={handleProfile}
+                >
+                 <Stack direction="column" spacing={-0.6} alignItems="center">
+                    <AccountCircleOutlinedIcon sx={{fontSize: {xs: 30, md: 24}, height: "auto"}}/>
+                    <Typography variant="body1" sx={{display: {md: "inherit", xs:"none"}}}>{isUserValid() ? "Профиль" : "Войти"}</Typography>
+                 </Stack>
+                </Button>
                 <Button variant="contained" color="primary"
                         onClick={() => navigate("/login")}
-                        sx={{display: {md: "inherit", xs: "none"}, height: 38}}>
+                        sx={{display: "none", height: 38}}>
                   Войти
                 </Button>
               </Stack>
 
-              <IconButton sx={{display: {md: "none", sm: "inherit"}}}>
-                <AccountCircleOutlinedIcon sx={{fontSize: 30, height: "auto"}}/>
-              </IconButton>
 
             </Stack>
 

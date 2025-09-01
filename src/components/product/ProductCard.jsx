@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Button, Card, CardActions, CardContent, CardMedia, IconButton, Stack, Typography} from "@mui/material";
+import {Box, Button, Card, CardActions, CardContent, CardMedia, IconButton, Stack, Typography} from "@mui/material";
 import GradeRoundedIcon from '@mui/icons-material/GradeRounded';
 import AddShoppingCartRoundedIcon from '@mui/icons-material/AddShoppingCartRounded';
 import RateReviewRoundedIcon from '@mui/icons-material/RateReviewRounded';
@@ -8,37 +8,49 @@ import FavoriteTwoToneIcon from '@mui/icons-material/FavoriteTwoTone';
 import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';
 import {useNavigate} from "react-router-dom";
 
-const ProductCard = ({id, title, image, price, producer, rating, reviewsCount}) => {
+const ProductCard = ({id, title, discount, image, price, seller, rating, reviewsCount}) => {
 
   const [liked, setLiked] = useState(false);
   const navigate = useNavigate();
 
   return (
-    <Card variant="elevation" sx={{width: {sm: 280, xs: "100%"}, borderRadius: 4}}>
+    <Card variant="elevation" sx={{width: {sm: 280, xs: "100%"}, borderRadius: 4, position: "relative"}}>
 
-      <CardMedia image={image} title={title}
-                 sx={{position: "relative", height: 250, display:"flex",
-                   justifyContent: "end", alignItems:"start", bgcolor: "lightgray"}}>
-        <IconButton onClick={() => setLiked(!liked)}>
-          {
-            liked ?
-            <FavoriteOutlinedIcon sx={{fill: "#E31B23"}}/> :
-            <FavoriteTwoToneIcon sx={{fill: "#606060"}} />
-          }
-        </IconButton>
+      <CardMedia title={title} onClick={() => navigate(`/product/${id}`)}
+                 sx={{height: {xs: 180, md: 250}, display:"flex",
+                      bgcolor: "white", justifyContent: "center", alignItems: "center"}}>
+        <Box
+          component="img"
+          sx={{
+            aspectRatio: "auto",
+            objectFit: "contain",
+            height: "100%",
+            width: "100%"
+          }}
+          alt={title}
+          src={"data:image/png;base64,"+image}
+        />
+
       </CardMedia>
-
+      <IconButton onClick={() => setLiked(!liked)} sx={{position: "absolute", right: 2, top: 2}}>
+        {
+          liked ?
+            <FavoriteOutlinedIcon sx={{fill: "#E31B23"}} /> :
+            <FavoriteTwoToneIcon sx={{fill: "#606060"}} />
+        }
+      </IconButton>
       <CardContent sx={{paddingY: 0, paddingX: {md: 2, sm: 1, xs: 0.5}, ":hover":{cursor:"pointer"}}}
-                   onClick={() => navigate(`/products/${id}`)}>
+                   onClick={() => navigate(`/product/${id}`)}>
         <Stack direction="row" alignItems="center" spacing={1}
                style={{ textOverflow: 'ellipsis', whiteSpace: "nowrap", overflow: "hidden",
-                 "-webkit-mask-image": "linear-gradient(90deg, #000 80%, transparent)"}}>
+                 "WebkitMaskImage": "linear-gradient(90deg, #000 80%, transparent)"}}>
           <Typography variant="h6" color={"#287233"} fontWeight={600}>
-            {price} &#8381;
+            {Math.round(price * (100 - discount)/100)} &#8381;
           </Typography>
-          <Typography fontSize={16} color="text.secondary" sx={{textDecoration: "line-through"}}>
-            {Math.round(price * 1.4 * 100)/100} &#8381;
-          </Typography>
+          {discount !== 0 ?
+            (<Typography fontSize={16} color="text.secondary" sx={{textDecoration: "line-through"}}>
+              {price} &#8381;
+            </Typography>) : ""}
         </Stack>
         <Typography variant="body1" sx={{ color: 'text.secondary'}}
                     style={{ textOverflow: 'ellipsis', whiteSpace: "nowrap", overflow: "hidden"}}>
@@ -46,8 +58,9 @@ const ProductCard = ({id, title, image, price, producer, rating, reviewsCount}) 
         </Typography>
         <Stack direction="row" alignItems="center" spacing={0.5}>
           <StoreIcon sx={{fill: "#112582", fontSize: 16}}/>
-          <Typography variant="body2" sx={{ color: 'text.primary' }}>
-            {producer}
+          <Typography variant="body2" sx={{ color: 'text.primary',
+            textOverflow: 'ellipsis', whiteSpace: "nowrap", overflow: "hidden" }}>
+            {seller}
           </Typography>
         </Stack>
         <Stack direction="row" alignItems="center" spacing={0.5}>

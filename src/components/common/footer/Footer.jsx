@@ -46,9 +46,10 @@ const Footer = () => {
                   <Stack spacing={1} direction="column" sx={{marginY: 1.5}} key={index}>
                     {
                       value.map((d, i) =>
-                      <NavLink key={index*footerCategories.length+i} className={"footer-link"} to={d.to}>
-                        {d.name}
-                      </NavLink>)
+                        <NavLink key={index*Object.keys(footerCategories).length+i} className={"footer-link"} to={d.to}>
+                          {d.name}
+                        </NavLink>
+                      )
                     }
                   </Stack>
                 </Grid>
