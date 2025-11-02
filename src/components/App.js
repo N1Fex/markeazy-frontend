@@ -10,6 +10,8 @@ import ProductPage from "./product/ProductPage";
 import {useLayoutEffect} from "react";
 import SearchPage from "./search/SearchPage";
 import ProfilePage from "./profile/ProfilePage";
+import Cart from "./cart/Cart";
+import OrdersPage from "./order/OrdersPage";
 
 function App() {
   const location = useLocation();
@@ -28,7 +30,9 @@ function App() {
           <Route path="/recovery" element={<PasswordRecovery/>} />
           <Route path="/product/:id" element={<ProductPage/>} />
           <Route path="/search" element={<SearchPage/>} />
-          <Route path="/profile" element={<ProfilePage/>} />
+          <Route path="/settings" element={<ProfilePage/>} />
+          <Route path="/cart" element={<Cart/>} />
+          <Route path="/orders" element={<OrdersPage />} />
           <Route path="*" element={<NotFoundPage/>} />
         </Routes>
         <Footer />

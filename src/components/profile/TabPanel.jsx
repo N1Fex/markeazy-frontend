@@ -1,10 +1,10 @@
-import {Box} from "@mui/material";
+import {Box, Container} from "@mui/material";
 import React from "react";
 
 const TabPanel = ({value, index, children}) => {
 
   return (
-      <div
+      <Container
           role="tabpanel"
           hidden={value !== index}
           id={`vertical-tabpanel-${index}`}
@@ -15,7 +15,7 @@ const TabPanel = ({value, index, children}) => {
               {children}
             </Box>
         )}
-      </div>
+      </Container>
   );
 }
 

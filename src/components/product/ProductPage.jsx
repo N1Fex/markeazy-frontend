@@ -6,7 +6,6 @@ import NeedToBeLoggedIn from "../common/NeedToBeLoggedIn";
 
 const ProductPage = () => {
 
-  const navigate = useNavigate();
   const {id} = useParams();
   const [info, setInfo] = useState({});
   const [error, setError] = useState({

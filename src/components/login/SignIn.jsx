@@ -1,15 +1,14 @@
 import {Button, InputLabel, Stack, TextField, Typography} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import {useLocation, useNavigate} from "react-router-dom";
-import {postToUrl} from "../axios_config";
+import {backToPreviousUrl, postToUrl} from "../axios_config";
 import ErrorMessage from "../common/ErrorMessage";
 import {isUserValid} from "../utils/JwtUtils";
 import {EMAIL_REGEX} from "./LoginUtils";
 
 
 const SignIn = ({email, setEmail, setPage}) => {
-  const location = useLocation();
-  const from = location.state?.from?.pathname || "/";
+
   const navigate = useNavigate();
   const [password, setPassword] = useState("");
   const [errorMessages, setErrorMessages] = useState([]);
@@ -21,6 +20,8 @@ const SignIn = ({email, setEmail, setPage}) => {
     passwordMessage: "",
   });
 
+  const [entered, setEntered] = useState(false);
+
   const handleChange = (e) => {
     if (e.target.id === "email") {
         e.target.classList.remove("error-field");
@@ -31,10 +32,9 @@ const SignIn = ({email, setEmail, setPage}) => {
     }
   }
 
-  const verifyInputs = (e) => {
+  const validateInputs = (e) => {
     const form = e.target.form;
     const emailField = form.querySelector("#email");
-    const passwordField = form.querySelector("#password");
 
     let result = true;
 
@@ -56,8 +56,7 @@ const SignIn = ({email, setEmail, setPage}) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!verifyInputs(e)) {
-      console.log(inputErrors);
+    if (!validateInputs(e)) {
       return;
     }
 
@@ -69,7 +68,8 @@ const SignIn = ({email, setEmail, setPage}) => {
             localStorage.setItem("token", token);
             setEmail("");
             setPassword("");
-            navigate(from);
+            setEntered(true);
+            backToPreviousUrl();
         })
         .catch(err => {
             setErrorMessages([err.response.data.message]);
@@ -77,8 +77,8 @@ const SignIn = ({email, setEmail, setPage}) => {
   }
 
   useEffect(() => {
-    if (isUserValid()) {
-      navigate("/");
+    if (isUserValid() && !entered) {
+      navigate("/settings");
     }
 
   })

@@ -12,6 +12,7 @@ export function getRolesFromToken(token) {
 
 export function logout() {
   localStorage.removeItem("token");
+  window.location.reload();
 }
 
 export function isUserValid() {

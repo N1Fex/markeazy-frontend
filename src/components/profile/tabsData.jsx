@@ -1,20 +1,17 @@
-import MenuIcon from "@mui/icons-material/Menu";
+import PersonalTab from "./tabs/PersonalTab";
+import SecurityTab from "./tabs/SecurityTab";
+import BadgeIcon from '@mui/icons-material/Badge';
+import SecurityIcon from '@mui/icons-material/Security';
 
-export const tabs = [
+export const getTabsPanels = (user) => [
   {
-    title: "Общее",
-    component: (<MenuIcon></MenuIcon>)
-  },
-  {
-    title: "Профиль",
-    component: (<>1</>)
+    title: "Личные данные",
+    icon: (<BadgeIcon />),
+    component: (<PersonalTab user={user}></PersonalTab>)
   },
   {
     title: "Безопасность",
-    component: (<>2</>)
-  },
-  {
-    title: "Еще чето",
-    component: (<>3</>)
+    icon: (<SecurityIcon />),
+    component: (<SecurityTab></SecurityTab>)
   },
 ]

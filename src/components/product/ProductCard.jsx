@@ -7,6 +7,8 @@ import StoreIcon from '@mui/icons-material/Store';
 import FavoriteTwoToneIcon from '@mui/icons-material/FavoriteTwoTone';
 import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';
 import {useNavigate} from "react-router-dom";
+import SellerLegend from "../common/SellerLegend";
+import {addProductToCart} from "../cart/CartManager";
 
 const ProductCard = ({id, title, discount, image, price, seller, rating, reviewsCount}) => {
 
@@ -56,13 +58,7 @@ const ProductCard = ({id, title, discount, image, price, seller, rating, reviews
                     style={{ textOverflow: 'ellipsis', whiteSpace: "nowrap", overflow: "hidden"}}>
           {title}
         </Typography>
-        <Stack direction="row" alignItems="center" spacing={0.5}>
-          <StoreIcon sx={{fill: "#112582", fontSize: 16}}/>
-          <Typography variant="body2" sx={{ color: 'text.primary',
-            textOverflow: 'ellipsis', whiteSpace: "nowrap", overflow: "hidden" }}>
-            {seller}
-          </Typography>
-        </Stack>
+        <SellerLegend seller={seller} />
         <Stack direction="row" alignItems="center" spacing={0.5}>
           <GradeRoundedIcon fontSize="small" style={{fill: "#f9c54e"}}/>
           <Typography variant="body1" sx={{ color: 'text.primary' }}>
@@ -78,7 +74,9 @@ const ProductCard = ({id, title, discount, image, price, seller, rating, reviews
 
       </CardContent>
       <CardActions>
-        <Button variant="contained" fullWidth sx={{borderRadius: 2}}>
+        <Button variant="contained" fullWidth
+                sx={{borderRadius: 2}}
+                onClick={() => addProductToCart(id)}>
           <AddShoppingCartRoundedIcon sx={{fontSize: 20, marginRight: 1}}/>В корзину
         </Button>
       </CardActions>

@@ -10,22 +10,22 @@ import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import MainMenuContent from "../../main/MainMenuContent";
 import {isUserValid} from "../../utils/JwtUtils";
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AccountMenu from "./AccountMenu";
 
 const Header = () => {
 
   const navigate = useNavigate();
 
   const [openedMainMenu, setOpenedMainMenu] = React.useState(false);
+  const [accountMenuAnchor, setAccountMenuAnchor] = React.useState(null);
 
   const handleMenu = (event) => {
     setOpenedMainMenu(true);
   };
 
-
   const handleProfile = (event) => {
     if (isUserValid()) {
-      navigate("/profile");
+      setAccountMenuAnchor(event.currentTarget);
     } else {
       navigate("/login");
     }
@@ -35,7 +35,6 @@ const Header = () => {
     <>
       <AppBar sx={{ position: "static", bgcolor: "#F8F8F8"}}>
           <Toolbar disableGutters sx={{margin: "0 2%"}}>
-
             <Stack direction="row" justifyContent="space-between"
                    alignItems="center" width="100%" height={60}>
               <IconButton sx={{display: {md: "none", sm: "inherit"}}} onClick={handleMenu} aria-label="menu">
@@ -66,7 +65,8 @@ const Header = () => {
 
               <Stack direction="row" spacing={{md: 2, xs: 0}} alignItems="center">
                 <Button sx={{paddingY: {md: 0, xs: 1}, textTransform: "none",
-                  minWidth: "max-content", borderRadius: {md: "inherit", xs:"50%"}}}>
+                  minWidth: "max-content", borderRadius: {md: "inherit", xs:"50%"}}}
+                        onClick={() => navigate("/cart")}>
 
                   <Stack direction="column" spacing={-0.6} alignItems="center">
                     <ShoppingCartOutlinedIcon sx={{fontSize: {xs: 30, md: 24}}}/>
@@ -81,7 +81,12 @@ const Header = () => {
                 >
                  <Stack direction="column" spacing={-0.6} alignItems="center">
                     <AccountCircleOutlinedIcon sx={{fontSize: {xs: 30, md: 24}, height: "auto"}}/>
-                    <Typography variant="body1" sx={{display: {md: "inherit", xs:"none"}}}>{isUserValid() ? "Профиль" : "Войти"}</Typography>
+                    <Typography variant="body1" sx={{display: {md: "inherit", xs:"none"}}}
+                                aria-controls={Boolean(accountMenuAnchor) && isUserValid() ? 'account-menu' : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={Boolean(accountMenuAnchor) && isUserValid() ? 'true' : undefined}>
+                      {isUserValid() ? "Профиль" : "Войти"}
+                    </Typography>
                  </Stack>
                 </Button>
                 <Button variant="contained" color="primary"
@@ -97,6 +102,7 @@ const Header = () => {
 
           </Toolbar>
         <MainMenuContent opened={openedMainMenu} setOpened={setOpenedMainMenu} />
+        <AccountMenu anchorEl={accountMenuAnchor} setAnchorEl={setAccountMenuAnchor}/>
       </AppBar>
     </>
   );
