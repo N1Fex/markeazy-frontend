@@ -5,7 +5,6 @@ import SearchBar from "./SearchBar";
 import Logotype from "../Logotype";
 import BrandName from "../BrandName";
 import MenuIcon from '@mui/icons-material/Menu';
-import CategoryIcon from '@mui/icons-material/Category';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import MainMenuContent from "../../main/MainMenuContent";
@@ -46,18 +45,6 @@ const Header = () => {
                 <Logotype type={"logoNoText"} />
                 <BrandName fontSize={24} fontColor={"primary"} sx={{display: {md: "block", xs: "none"}}}/>
               </Stack>
-
-
-              <Button variant="outlined" sx={{textTransform: "none",
-                display: {md: "inherit", xs: "none"},
-                paddingX: {xs:0, md: 1}, minWidth: 32}} >
-                <CategoryIcon />
-                <Typography variant="body1" fontSize={18}
-                            sx={{color: 'text.primary', marginX: 0.8,
-                            display: {lg: "inherit", md: "none"}}}>
-                  Категории
-                </Typography>
-              </Button>
 
               <SearchBar />
 

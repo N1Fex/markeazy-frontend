@@ -1,6 +1,7 @@
 import React from 'react';
 import {Alert, Backdrop, Button, Card, CircularProgress, Divider, Snackbar, Stack, Typography} from "@mui/material";
 import {postToUrl} from "../../axios_config";
+import {useNavigate} from "react-router-dom";
 
 const CartSidebar = ({cartProducts, sx, style}) => {
 
@@ -11,6 +12,8 @@ const CartSidebar = ({cartProducts, sx, style}) => {
 
     productsQuantity: 0,
   };
+
+  const navigate = useNavigate();
 
   cartProducts.forEach((item) => {
     info.productsQuantity += item.quantity;
@@ -46,14 +49,25 @@ const CartSidebar = ({cartProducts, sx, style}) => {
 
     postToUrl("/order", productsToOrder).then(res => {
       setOpenBackdrop(false);
-      //navigate("/orders", res... КАКИЕ-ТО ПАРАМЕТРЫ ДЛЯ ЗАГРУЗКИ СТРАНИЦЫ)
-    }).catch(err => {
-      setOpenBackdrop(false);
+      navigate("/orders")
       setSnackbarParams({
-        severity: "error",
-        message: err.message === "Network Error" ? "Сервер сейчас не доступен, попробуйте позже" : err.message
+        severity: "success",
+        message: "Заказ успешно оформлен!"
       })
       setOpenSnackbar(true);
+    }).catch(err => {
+      if (err.status === 401) {
+        navigate("/login");
+        setOpenBackdrop(false);
+      } else {
+        setOpenBackdrop(false);
+        setSnackbarParams({
+          severity: "error",
+          message: err.message === "Network Error" ?"Сервер сейчас не доступен, попробуйте позже" : err.message
+        })
+        setOpenSnackbar(true);
+      }
+
     });
   }
 

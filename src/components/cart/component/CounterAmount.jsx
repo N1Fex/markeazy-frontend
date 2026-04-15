@@ -5,10 +5,9 @@ import AddRoundedIcon from '@mui/icons-material/AddRounded';
 import "./CounterAmount.css";
 import {changeProductAmountInCart} from "../CartManager";
 
-const CounterAmount = ({id, value, setValue, handleSpinClick}) => {
-
+const CounterAmount = ({id, value, setValue, handleSpinClick, sx}) => {
   return (
-      <Stack direction="row" spacing={1}>
+      <Stack direction="row" spacing={1} sx={sx} alignItems="center">
 
         <IconButton
             disabled={value===1}
@@ -23,15 +22,16 @@ const CounterAmount = ({id, value, setValue, handleSpinClick}) => {
         </IconButton>
 
         <TextField type="number" value={+value}
-                   inputProps={{min: 0, style: { textAlign: 'center' }}}
+                   inputProps={{min: 0, style: { textAlign: 'center', height: "100%"}}}
                    onChange={(e) => setValue(+e.target.value)}
+                   onBlur={() => changeProductAmountInCart(id, value)}
                    className={"no-spinners"}
+                   style={{height: "100%", width: "auto"}}
                    size="small"/>
 
         <IconButton
             sx={{borderRadius: 2, bgcolor: "#E8E8E8"}}
             onClick={() => {
-              console.log(id);
               setValue(+value+1);
               handleSpinClick(id, "add");
               changeProductAmountInCart(id, +value+1);

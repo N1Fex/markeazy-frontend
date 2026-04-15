@@ -1,4 +1,5 @@
 import {isUserValid} from "../utils/JwtUtils";
+import {patchToUrl, postToUrl} from "../axios_config";
 
 function saveProductLocally(product) {
   const cart = getLocalCart();
@@ -59,19 +60,29 @@ export function getLocalCart() {
   return cart ? JSON.parse(cart) : [];
 }
 
-export function addProductToCart(product) {
+export function addProductToCart(productId) {
 
   if (isUserValid()) {
-    console.log("Сохранение в корзину продукта..");
+    postToUrl("/cart", [{
+      product: {
+        id: productId
+      },
+      quantity: 1
+    }])
   } else {
-    saveProductLocally(product);
+    saveProductLocally(productId);
   }
 
 }
 
 export function changeProductAmountInCart(productId, amount) {
   if (isUserValid()) {
-    //todo backend
+    patchToUrl("/cart", {
+      product: {
+        id: productId
+      },
+      quantity: amount
+    })
   } else {
     changeProductAmountLocally(productId, amount);
   }

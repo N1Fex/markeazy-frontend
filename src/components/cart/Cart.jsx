@@ -5,7 +5,7 @@ import CartSidebar from "./component/CartSidebar";
 import {getToUrl, postToUrl} from "../axios_config";
 import {isUserValid} from "../utils/JwtUtils";
 import LoadingPage from "../common/LoadingPage";
-import {changeProductAmountInCart, getLocalCart, removeProductFromCart, saveProductsInCart} from "./CartManager";
+import {getLocalCart, removeProductFromCart, saveProductsInCart} from "./CartManager";
 import ProductionQuantityLimitsRoundedIcon from '@mui/icons-material/ProductionQuantityLimitsRounded';
 import {NavLink} from "react-router-dom";
 
@@ -14,16 +14,14 @@ const Cart = () => {
   const [cartProducts, setCartProducts] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
 
-
   const handleSpinClick = (id, type) => {
-
     const newCart = cartProducts.map((el) => {
       if (el.product.id === id) {
         el.quantity += type === "add" ? 1 : -1;
       }
       return el;
     });
-    saveProductsInCart(newCart);
+    saveProductsInCart(newCart, id);
     setCartProducts(newCart);
   }
 
@@ -37,6 +35,7 @@ const Cart = () => {
     setIsLoading(true);
     if (isUserValid()){
       getToUrl("/cart").then((res) => {
+
         setCartProducts(res.data);
         setIsLoading(false);
       }).catch((err) => {
@@ -51,21 +50,21 @@ const Cart = () => {
       }).then((res) => {
         const data = res.data;
 
-        const newCart = cart.map((item, index) =>{
+        const newCart = cart.map((item) => {
           return {
             quantity: item.amount,
-            product: data[index]
+            product: data.find(el => el.id === item.id),
           }
         });
-
         setCartProducts(newCart);
         setIsLoading(false);
       }).catch((err) => {
         console.error(err);
       })
     }
-  }, [setCartProducts]);  
+  }, [setCartProducts]);
 
+  console.log(cartProducts);
 
   return (
       <>
@@ -97,9 +96,9 @@ const Cart = () => {
                  sx={{display: cartProducts.length > 0 ? "flex" : "none" }}>
             <Stack direction="column" spacing={2} sx={{flexGrow: 1}}>
               {
-                cartProducts.map((el, i) => (
+                cartProducts.map((el) => (
                     <CartProductCard
-                        key={i}
+                        key={el.product.id}
                         handleDeleting={handleDeleteProduct}
                         handleSpinClick={handleSpinClick}
                         id={el.product.id}
