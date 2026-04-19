@@ -43,6 +43,11 @@ export function patchToUrl(path, params, config) {
   return API.patch(path, params, config);
 }
 
+export function deleteToUrl(path, params, config) {
+  controlToken();
+  return API.delete(path, params, config);
+}
+
 export function backToPreviousUrl() {
   window.location.assign(previousUrl);
 }

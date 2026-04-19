@@ -2,18 +2,18 @@ import React, {useEffect} from 'react';
 import {Grid} from "@mui/material";
 import ProductCard from "../product/ProductCard";
 import {isUserValid} from "../utils/JwtUtils";
-import {getLocalCart} from "../cart/CartManager";
+import {addProductToCart, getLocalCart} from "../cart/CartManager";
 import {getToUrl} from "../axios_config";
 
 const CatalogContent = ({products}) => {
 
   const [cart, setCart] = React.useState([]);
 
-    const addProductToCart = (id, quantity) => {
-      const newCart = [...cart, {id: id, amount: quantity}];
-      setCart(newCart);
-      console.log(newCart);
-    }
+  const addProduct = (id, quantity) => {
+    const newCart = [...cart, {id: id, amount: quantity}];
+    addProductToCart(id);
+    setCart(newCart);
+  }
 
   useEffect(() => {
     if (isUserValid()) {
@@ -25,6 +25,7 @@ const CatalogContent = ({products}) => {
     } else {
       setCart(getLocalCart());
     }
+
   }, [setCart]);
 
 
@@ -55,7 +56,7 @@ const CatalogContent = ({products}) => {
               seller={product.seller}
               reviewsCount={product.reviewsCount}
               handleSpinClick={handleSpinClick}
-              addToCart={addProductToCart}
+              addToCart={addProduct}
               cart={cart}
             />
           </Grid>

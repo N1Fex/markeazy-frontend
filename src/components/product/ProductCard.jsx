@@ -1,19 +1,28 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Box, Button, Card, CardActions, CardContent, CardMedia, IconButton, Stack, Typography} from "@mui/material";
 import GradeRoundedIcon from '@mui/icons-material/GradeRounded';
 import AddShoppingCartRoundedIcon from '@mui/icons-material/AddShoppingCartRounded';
 import RateReviewRoundedIcon from '@mui/icons-material/RateReviewRounded';
-import StoreIcon from '@mui/icons-material/Store';
 import FavoriteTwoToneIcon from '@mui/icons-material/FavoriteTwoTone';
 import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';
 import {useNavigate} from "react-router-dom";
 import SellerLegend from "../common/SellerLegend";
 import {addProductToCart} from "../cart/CartManager";
+import CounterAmount from "../cart/component/CounterAmount";
 
-const ProductCard = ({id, title, discount, image, price, seller, rating, reviewsCount}) => {
+const ProductCard = ({id, title, discount, image, price, seller, rating, reviewsCount, handleSpinClick,
+                         cart, addToCart}) => {
 
   const [liked, setLiked] = useState(false);
+  const [amount, setAmount] = useState(0);
   const navigate = useNavigate();
+
+  useEffect(() => {
+      const finded = cart.find(e => e.id === id);
+      if (finded) {
+          setAmount(finded.amount);
+      }
+  }, [cart, id, setAmount]);
 
   return (
     <Card variant="elevation" sx={{width: {sm: 280, xs: "100%"}, borderRadius: 4, position: "relative"}}>
@@ -74,11 +83,20 @@ const ProductCard = ({id, title, discount, image, price, seller, rating, reviews
 
       </CardContent>
       <CardActions>
-        <Button variant="contained" fullWidth
-                sx={{borderRadius: 2}}
-                onClick={() => addProductToCart(id)}>
-          <AddShoppingCartRoundedIcon sx={{fontSize: 20, marginRight: 1}}/>В корзину
-        </Button>
+          {
+              amount !== 0 ?
+                  <CounterAmount id={id} value={amount} setValue={setAmount}
+                                 handleSpinClick={handleSpinClick} sx={{height: 36}} /> :
+
+                  <Button variant="contained" fullWidth
+                          sx={{borderRadius: 2}}
+                          onClick={() => {
+                            addToCart(id, 1);
+                          }}>
+                      <AddShoppingCartRoundedIcon sx={{fontSize: 20, marginRight: 1}}/>В корзину
+                  </Button>
+          }
+
       </CardActions>
     </Card>
   );

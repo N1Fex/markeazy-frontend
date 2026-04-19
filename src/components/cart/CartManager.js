@@ -1,5 +1,5 @@
 import {isUserValid} from "../utils/JwtUtils";
-import {patchToUrl, postToUrl} from "../axios_config";
+import {deleteToUrl, patchToUrl, postToUrl} from "../axios_config";
 
 function saveProductLocally(product) {
   const cart = getLocalCart();
@@ -91,7 +91,7 @@ export function changeProductAmountInCart(productId, amount) {
 export function removeProductFromCart(productId) {
 
   if (isUserValid()) {
-    //todo
+    deleteToUrl(`/cart?product_id=${productId}`);
   } else {
     return removeProductLocally(productId);
   }
