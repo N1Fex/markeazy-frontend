@@ -3,8 +3,8 @@ import axios from "axios";
 let previousUrl = "/";
 
 const API = axios.create({
-  //baseURL: "http://192.168.0.10:8080/api/v1",
-  baseURL: process.env.REACT_APP_BACKEND_URL,
+  baseURL: "http://localhost:8081/api/v1",
+  //baseURL: process.env.REACT_APP_BACKEND_URL,
   headers: {
     Accept: "application/json",
     "Content-Type": "application/json",
@@ -41,6 +41,11 @@ export function postToUrl(path, params, config) {
 export function patchToUrl(path, params, config) {
   controlToken();
   return API.patch(path, params, config);
+}
+
+export function deleteToUrl(path, params, config) {
+  controlToken();
+  return API.delete(path, params, config);
 }
 
 export function backToPreviousUrl() {

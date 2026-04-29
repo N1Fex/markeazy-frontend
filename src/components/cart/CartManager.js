@@ -1,4 +1,5 @@
-import {isUserValid} from "../utils/JwtUtils";
+import {isSellerAccount, isUserValid} from "../utils/JwtUtils";
+import {deleteToUrl, patchToUrl, postToUrl} from "../axios_config";
 
 function saveProductLocally(product) {
   const cart = getLocalCart();
@@ -47,6 +48,9 @@ export function saveProductsInCart(products) {
       amount: pr.quantity,
     }
   });
+  if (isSellerAccount()) {
+    return;
+  }
   if (isUserValid()) {
     //todo
   } else {
@@ -59,28 +63,47 @@ export function getLocalCart() {
   return cart ? JSON.parse(cart) : [];
 }
 
-export function addProductToCart(product) {
+export function addProductToCart(productId) {
+  if (isSellerAccount()) {
+    return;
+  }
 
   if (isUserValid()) {
-    console.log("Сохранение в корзину продукта..");
+    postToUrl("/cart", [{
+      product: {
+        id: productId
+      },
+      quantity: 1
+    }])
   } else {
-    saveProductLocally(product);
+    saveProductLocally(productId);
   }
 
 }
 
 export function changeProductAmountInCart(productId, amount) {
+  if (isSellerAccount()) {
+    return;
+  }
   if (isUserValid()) {
-    //todo backend
+    patchToUrl("/cart", {
+      product: {
+        id: productId
+      },
+      quantity: amount
+    })
   } else {
     changeProductAmountLocally(productId, amount);
   }
 }
 
 export function removeProductFromCart(productId) {
+  if (isSellerAccount()) {
+    return;
+  }
 
   if (isUserValid()) {
-    //todo
+    deleteToUrl(`/cart?product_id=${productId}`);
   } else {
     return removeProductLocally(productId);
   }

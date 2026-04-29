@@ -7,7 +7,7 @@ import {convertDateToString} from "../../utils/DateUtils";
 import {patchToUrl} from "../../axios_config";
 import GridRow from "./GridRow";
 
-const PersonalTab = ({user}) => {
+const PersonalTab = ({user, accountType}) => {
 
   const [editing, setEditing] = React.useState(false);
   const [openBackdrop, setOpenBackdrop] = React.useState(false);
@@ -18,15 +18,16 @@ const PersonalTab = ({user}) => {
   });
 
   const [userData, setUserData] = React.useState(user);
+  const isSeller = accountType === "SELLER";
 
   const handleCancel = (e) => {
     e.preventDefault();
     setEditing(false);
-  }
+  };
 
-  const handleCloseSnackbar = (e, reason) => {
+  const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
-  }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -37,30 +38,31 @@ const PersonalTab = ({user}) => {
       if (input.value !== userData[input.id]) {
         outputObj[input.id] = input.value;
       }
-    })
+    });
     if (Object.keys(outputObj).length === 0) {
       setEditing(false);
       return;
     }
     setOpenBackdrop(true);
     patchToUrl("/profile", outputObj)
-        .then((res) => {
+        .then(() => {
           setOpenBackdrop(false);
           setEditing(false);
+          setUserData((prevState) => ({...prevState, ...outputObj}));
           setSnackbarParams({
             message: "Данные успешно изменены!",
             severity: "success",
           });
           setOpenSnackbar(true);
-        }).catch((err) => {
+        }).catch(() => {
           setOpenBackdrop(false);
           setSnackbarParams({
             message: "Что-то пошло не так, попробуйте позже!",
             severity: "error",
           });
           setOpenSnackbar(true);
-    });
-  }
+        });
+  };
 
   return (
       <Container>
@@ -86,9 +88,27 @@ const PersonalTab = ({user}) => {
         <form>
           <Grid container spacing={2} columns={16} justifyContent="space-between" alignItems="center">
             <GridRow id={"id"} label={"Идентификатор"} value={userData.id} editable={false} editing={editing} />
-            <GridRow id={"registrationDate"} label={"Дата регистрации"} value={convertDateToString(new Date(userData.registrationDate))} editable={false} editing={editing} />
-            <GridRow id={"name"} label={"Имя"} value={userData.name} editable={true} editing={editing} />
-            <GridRow id={"email"} label={"Эл.почта"} value={userData.email} editable={false} editing={editing} />
+            <GridRow
+                id={"registrationDate"}
+                label={"Дата регистрации"}
+                value={convertDateToString(new Date(userData.registrationDate))}
+                editable={false}
+                editing={editing}
+            />
+            <GridRow
+                id={"name"}
+                label={isSeller ? "Название магазина" : "Имя"}
+                value={userData.name}
+                editable={true}
+                editing={editing}
+            />
+            <GridRow
+                id={isSeller ? "login" : "email"}
+                label={isSeller ? "Логин" : "Эл.почта"}
+                value={isSeller ? userData.login : userData.email}
+                editable={false}
+                editing={editing}
+            />
           </Grid>
 
           <Stack direction="row" spacing={2} justifyContent="end">
@@ -108,7 +128,6 @@ const PersonalTab = ({user}) => {
               <Typography sx={{marginRight: 1}}>Применить</Typography>
               <CheckIcon fontSize="small"/>
             </Button>
-
           </Stack>
         </form>
       </Container>

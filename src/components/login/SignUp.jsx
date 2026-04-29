@@ -1,175 +1,202 @@
 import {Button, InputLabel, TextField, Typography} from "@mui/material";
 import React from "react";
 import {EMAIL_REGEX, validatePasswords} from "./LoginUtils";
-import {fireChangeForInputTimeIfValid} from "@testing-library/user-event/dist/keyboard/shared";
 import ErrorMessage from "../common/ErrorMessage";
 import {backToPreviousUrl, postToUrl} from "../axios_config";
 import {getLocalCart} from "../cart/CartManager";
 
-const SignUp = ({email, setEmail, setPage}) => {
-
+const SignUp = ({identifier, setIdentifier, setPage, accountType}) => {
   const [inputValues, setInputValues] = React.useState({
     name: "",
     password: "",
     confirmPassword: "",
-  })
-
+  });
   const [errorsMessages, setErrorsMessages] = React.useState({
-    email: "",
-    name: ""
-  })
+    identifier: "",
+    name: "",
+  });
+  const [passwordErrors, setPasswordErrors] = React.useState([]);
 
-  const [passwordErrors, setPasswordErrors] = React.useState([])
+  const isSeller = accountType === "SELLER";
+  const identifierLabel = isSeller ? "Логин" : "Email";
+  const identifierPlaceholder = isSeller ? "Введите логин" : "Введите почту";
+  const nameLabel = isSeller ? "Название магазина" : "Имя";
+  const namePlaceholder = isSeller ? "Введите название магазина" : "Введите ваше имя";
+  const registerPath = isSeller ? "/register/seller" : "/register";
 
-  const validateInputs = (e) => {
-    const newObjectState = {name:"", email:""};
-
+  const validateInputs = () => {
+    const newObjectState = {name: "", identifier: ""};
     let result = true;
 
-    if (!String(email).match(EMAIL_REGEX)) {
-      newObjectState.email = "Неверный формат почты";
+    if (isSeller) {
+      if (identifier.trim().length < 3) {
+        newObjectState.identifier = "Минимальная длина логина 3 символа";
+        result = false;
+      }
+    } else if (!String(identifier).match(EMAIL_REGEX)) {
+      newObjectState.identifier = "Неверный формат почты";
       result = false;
     }
 
-    if (inputValues.name.length < 3) {
-      newObjectState.name = "Минимальная длина имени 3 символа";
+    if (inputValues.name.trim().length < 3) {
+      newObjectState.name = isSeller
+          ? "Минимальная длина названия магазина 3 символа"
+          : "Минимальная длина имени 3 символа";
       result = false;
     }
 
-    if (inputValues.name.search("[0-9]") !== -1) {
+    if (!isSeller && inputValues.name.search("[0-9]") !== -1) {
       newObjectState.name = "Имя не может содержать цифры";
       result = false;
-
     }
 
     const errors = validatePasswords(inputValues.password, inputValues.confirmPassword);
     setPasswordErrors([...errors]);
 
     result = errors.length === 0 && result;
-
     setErrorsMessages(newObjectState);
     return result;
-  }
+  };
 
   const handleChange = (e) => {
     e.preventDefault();
 
-    if (e.target.id === "email") {
-      setEmail(e.target.value);
-    } else {
-      setInputValues({...inputValues, [e.target.id]: e.target.value});
+    if (e.target.id === "identifier") {
+      setIdentifier(e.target.value);
+      setErrorsMessages((prevState) => ({...prevState, identifier: ""}));
+      return;
     }
-  }
+
+    setInputValues({...inputValues, [e.target.id]: e.target.value});
+    if (e.target.id === "name") {
+      setErrorsMessages((prevState) => ({...prevState, name: ""}));
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!validateInputs(e)) return;
+    if (!validateInputs()) return;
 
-    postToUrl("/register", {
-      email: email,
-      name: inputValues.name,
+    const payload = {
+      name: inputValues.name.trim(),
       password: inputValues.password,
       confirmPassword: inputValues.confirmPassword,
-      cartProducts: getLocalCart().map((cart) => {
-        return {
-          quantity: cart.amount,
-          product: {
-            id: cart.id
-          },
-        }
-      })
-    }).then(res => {
-      const token = res.data.token;
-      const user = res.data.user;
+    };
 
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
+    if (isSeller) {
+      payload.login = identifier.trim();
+    } else {
+      payload.email = identifier.trim();
+      payload.cartProducts = getLocalCart().map((cart) => ({
+        quantity: cart.amount,
+        product: {
+          id: cart.id,
+        },
+      }));
+    }
 
-      backToPreviousUrl();
-    }).catch(err => {
-      if (err.response && err.response.data) {
-        setPasswordErrors(err.response.data.message);
-      } else {
-        setPasswordErrors("Что-то пошло не так, попробуйте еще раз позже");
-      }
-    })
-  }
+    postToUrl(registerPath, payload)
+        .then((res) => {
+          const token = res.data.token;
+          const user = res.data.user;
+
+          localStorage.setItem("token", token);
+          if (user) {
+            localStorage.setItem("user", JSON.stringify(user));
+          }
+
+          backToPreviousUrl();
+        }).catch((err) => {
+          if (err.response && err.response.data) {
+            setPasswordErrors(err.response.data.message);
+          } else {
+            setPasswordErrors("Что-то пошло не так, попробуйте еще раз позже");
+          }
+        });
+  };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <InputLabel variant="standard" sx={{color: "#000", marginTop: 1}}>
-        Email
-      </InputLabel>
-      <TextField
-        id="email"
-        type="email"
-        placeholder="Введите почту"
-        variant="outlined"
-        value={email}
-        onChange={handleChange}
-        fullWidth
-        required
-        helperText={errorsMessages.email}
-        error={errorsMessages.email.length !== 0}
-      />
+      <form onSubmit={handleSubmit}>
+        <InputLabel variant="standard" sx={{color: "#000", marginTop: 1}}>
+          {identifierLabel}
+        </InputLabel>
+        <TextField
+            id="identifier"
+            type={isSeller ? "text" : "email"}
+            placeholder={identifierPlaceholder}
+            variant="outlined"
+            value={identifier}
+            onChange={handleChange}
+            fullWidth
+            required
+            helperText={errorsMessages.identifier}
+            error={errorsMessages.identifier.length !== 0}
+        />
 
-      <InputLabel variant="standard" sx={{color: "#000", marginTop: 1}} >
-        Имя
-      </InputLabel>
-      <TextField
-        id="name"
-        type="text"
-        placeholder="Введите ваше имя"
-        variant="outlined"
-        fullWidth
-        required
-        helperText={errorsMessages.name}
-        onChange={handleChange}
-        error={errorsMessages.name.length !== 0}
+        <InputLabel variant="standard" sx={{color: "#000", marginTop: 1}}>
+          {nameLabel}
+        </InputLabel>
+        <TextField
+            id="name"
+            type="text"
+            placeholder={namePlaceholder}
+            variant="outlined"
+            fullWidth
+            required
+            helperText={errorsMessages.name}
+            onChange={handleChange}
+            error={errorsMessages.name.length !== 0}
+            value={inputValues.name}
+        />
 
-      />
+        <InputLabel variant="standard" sx={{color: "#000", marginTop: 1}}>
+          Пароль
+        </InputLabel>
+        <TextField
+            id="password"
+            type="password"
+            placeholder="Введите пароль"
+            variant="outlined"
+            fullWidth
+            required
+            onChange={handleChange}
+            value={inputValues.password}
+        />
 
-      <InputLabel variant="standard" sx={{color: "#000", marginTop: 1}} >
-        Пароль
-      </InputLabel>
-      <TextField
-        id="password"
-        type="password"
-        placeholder="Введите пароль"
-        variant="outlined"
-        fullWidth
-        required
-        onChange={handleChange}
+        <InputLabel variant="standard" sx={{color: "#000", marginTop: 1}}>
+          Повторный пароль
+        </InputLabel>
+        <TextField
+            id="confirmPassword"
+            type="password"
+            placeholder="Введите пароль повторно"
+            variant="outlined"
+            fullWidth
+            required
+            onChange={handleChange}
+            value={inputValues.confirmPassword}
+        />
 
-      />
-      <InputLabel variant="standard" sx={{color: "#000", marginTop: 1}} >
-        Повторный пароль
-      </InputLabel>
-      <TextField
-        id="confirmPassword"
-        type="password"
-        placeholder="Введите пароль повторно"
-        variant="outlined"
-        fullWidth
-        required
-        onChange={handleChange}
-      />
-      <Typography variant="body1"
-                  onClick={() => setPage("login")}
-                  sx={{
-                    marginTop: 1,
-                    textDecoration: "underline",
-                    color: "#00F",
-                    ":hover": {cursor: "pointer"}}}>
-        У меня уже есть аккаунт.
-      </Typography>
-      <ErrorMessage messages={passwordErrors} />
-      <Button variant="contained" color="primary" sx={{marginTop: 2}} onClick={handleSubmit} fullWidth>
-        Создать аккаунт
-      </Button>
+        <Typography
+            variant="body1"
+            onClick={() => setPage("login")}
+            sx={{
+              marginTop: 1,
+              textDecoration: "underline",
+              color: "#00F",
+              ":hover": {cursor: "pointer"},
+            }}
+        >
+          У меня уже есть аккаунт.
+        </Typography>
 
-    </form>
-  )
-}
+        <ErrorMessage messages={passwordErrors} />
+
+        <Button variant="contained" color="primary" sx={{marginTop: 2}} type="submit" fullWidth>
+          Создать аккаунт
+        </Button>
+      </form>
+  );
+};
 
 export default SignUp;

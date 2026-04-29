@@ -12,6 +12,7 @@ import SearchPage from "./search/SearchPage";
 import ProfilePage from "./profile/ProfilePage";
 import Cart from "./cart/Cart";
 import OrdersPage from "./order/OrdersPage";
+import SellerPage from "./seller/SellerPage";
 
 function App() {
   const location = useLocation();
@@ -33,6 +34,8 @@ function App() {
           <Route path="/settings" element={<ProfilePage/>} />
           <Route path="/cart" element={<Cart/>} />
           <Route path="/orders" element={<OrdersPage />} />
+          <Route path="/myproducts" element={<SellerPage self={true} />} />
+          <Route path="/seller/:id" element={<SellerPage />} />
           <Route path="*" element={<NotFoundPage/>} />
         </Routes>
         <Footer />
