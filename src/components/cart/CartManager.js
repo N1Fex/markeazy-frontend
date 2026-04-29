@@ -1,4 +1,4 @@
-import {isUserValid} from "../utils/JwtUtils";
+import {isSellerAccount, isUserValid} from "../utils/JwtUtils";
 import {deleteToUrl, patchToUrl, postToUrl} from "../axios_config";
 
 function saveProductLocally(product) {
@@ -48,6 +48,9 @@ export function saveProductsInCart(products) {
       amount: pr.quantity,
     }
   });
+  if (isSellerAccount()) {
+    return;
+  }
   if (isUserValid()) {
     //todo
   } else {
@@ -61,6 +64,9 @@ export function getLocalCart() {
 }
 
 export function addProductToCart(productId) {
+  if (isSellerAccount()) {
+    return;
+  }
 
   if (isUserValid()) {
     postToUrl("/cart", [{
@@ -76,6 +82,9 @@ export function addProductToCart(productId) {
 }
 
 export function changeProductAmountInCart(productId, amount) {
+  if (isSellerAccount()) {
+    return;
+  }
   if (isUserValid()) {
     patchToUrl("/cart", {
       product: {
@@ -89,6 +98,9 @@ export function changeProductAmountInCart(productId, amount) {
 }
 
 export function removeProductFromCart(productId) {
+  if (isSellerAccount()) {
+    return;
+  }
 
   if (isUserValid()) {
     deleteToUrl(`/cart?product_id=${productId}`);
