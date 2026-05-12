@@ -129,7 +129,7 @@ const Cart = () => {
                       price={el.product.price}
                       discount={el.product.discount}
                       cartAmount={el.quantity}
-                      image={el.product.image}
+                      image={el.product.url}
                   />
               ))}
             </Stack>
